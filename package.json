@@ -1,0 +1,12 @@
+{
+  "name": "csv-cleaner",
+  "version": "0.1.0",
+  "description": "Clean a messy CSV in the browser and get a report of every change.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "python3 -m http.server 8000"
+  }
+}
