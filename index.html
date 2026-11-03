@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CSV Cleaner</title>
+    <meta name="description" content="Clean a messy CSV in your browser and get a report of every change. Nothing is uploaded." />
+    <link rel="stylesheet" href="src/styles.css" />
+    <script type="module" src="src/app.js"></script>
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>CSV cleaner</h1>
+      <p>
+        Drop in a messy spreadsheet export and get a clean file back, with a report of every change and every value it
+        couldn't fix. Your file never leaves your computer.
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <h2>Your file</h2>
+        <label id="drop" class="drop" tabindex="0">
+          <input id="file" type="file" accept=".csv,.tsv,.txt,text/csv" hidden />
+          <strong>Drop a CSV here</strong>
+          <span>or click to choose one</span>
+        </label>
+        <button type="button" id="sample">Try a messy sample file</button>
+        <p class="hint">The sample is made-up sales data with every kind of problem the cleaner fixes.</p>
+
+        <details class="helper">
+          <summary>Or paste CSV text</summary>
+          <textarea id="paste" rows="6" spellcheck="false" aria-label="CSV text"></textarea>
+          <button type="button" id="usePaste">Clean this text</button>
+        </details>
+
+        <fieldset class="options">
+          <legend>What to fix</legend>
+          <label><input type="checkbox" data-option="trim" checked /> Trim extra spaces</label>
+          <label><input type="checkbox" data-option="missing" checked /> Blank out "N/A", "null", "-" and similar</label>
+          <label><input type="checkbox" data-option="dropEmptyRows" checked /> Remove empty rows</label>
+          <label><input type="checkbox" data-option="dropEmptyColumns" checked /> Remove empty columns</label>
+          <label><input type="checkbox" data-option="convert" checked /> Write numbers, dates and yes/no consistently</label>
+          <label><input type="checkbox" data-option="dropDuplicates" checked /> Remove exact duplicate rows</label>
+        </fieldset>
+        <label class="check"><input type="checkbox" id="excel" checked /> Make the download open cleanly in Excel</label>
+        <p class="hint">Adds a marker so Excel reads accented letters correctly.</p>
+      </section>
+
+      <section class="results" aria-live="polite">
+        <div id="empty" class="panel">
+          <h2>Results</h2>
+          <p class="hint">Choose a file, or try the sample, to see what the cleaner finds.</p>
+        </div>
+
+        <div id="output" hidden>
+          <div class="verdict summary">
+            <div>
+              <p id="summary"></p>
+              <p class="hint" id="fileName"></p>
+            </div>
+            <button type="button" id="download" class="primary">Download clean CSV</button>
+          </div>
+
+          <div class="panel">
+            <h2>What was changed</h2>
+            <ul id="steps" class="steps"></ul>
+          </div>
+
+          <div class="panel">
+            <h2>Columns</h2>
+            <div class="table-wrap"><table id="columns" class="data"></table></div>
+          </div>
+
+          <div class="panel">
+            <h2>Needs a look</h2>
+            <p class="hint">Values the cleaner couldn't fix on its own, by row number in your original file.</p>
+            <ul id="issues" class="issues"></ul>
+          </div>
+
+          <div class="panel">
+            <h2>Preview of the clean file</h2>
+            <p class="hint" id="previewNote"></p>
+            <div class="table-wrap"><table id="preview" class="data"></table></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <p>
+        Runs entirely in your browser; the file is never uploaded.
+        <a href="https://github.com/AvgChenChen/csv-cleaner">Source on GitHub</a>.
+      </p>
+    </footer>
+  </body>
+</html>
