@@ -1,5 +1,7 @@
 # CSV cleaner
 
+**Try it: [avgchenchen.github.io/csv-cleaner](https://avgchenchen.github.io/csv-cleaner/)**
+
 Spreadsheet exports are messy: extra spaces, "N/A" in number columns, `$1,250.00` next to
 `1250`, dates written three different ways, duplicate rows. This tool cleans a CSV file in the
 browser and gives you a report of **every change it made and every value it couldn't fix**, by
