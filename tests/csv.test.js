@@ -54,3 +54,8 @@ test("delimiter detection handles quoted line breaks in column names and values"
     ["Alice\nSmith", "100"],
   ]);
 });
+
+test("stringifying an empty CSV produces an empty file", () => {
+  assert.equal(stringify([]), "");
+  assert.deepEqual(parse(stringify([])).rows, []);
+});

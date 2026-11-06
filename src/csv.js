@@ -107,5 +107,6 @@ function quote(value, delimiter) {
 
 /** Turn rows back into CSV text, quoting only the fields that need it. */
 export function stringify(rows, delimiter = ",") {
+  if (rows.length === 0) return "";
   return rows.map((row) => row.map((v) => quote(v, delimiter)).join(delimiter)).join("\r\n") + "\r\n";
 }
