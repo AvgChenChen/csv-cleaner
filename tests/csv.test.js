@@ -45,3 +45,12 @@ test("writing quotes only the fields that need it, and reading it back gives the
   assert.ok(text.includes('"Smith, Jo"') && text.includes('"said ""hi"""'));
   assert.deepEqual(parse(text).rows, rows);
 });
+
+test("delimiter detection handles quoted line breaks in column names and values", () => {
+  const text = '"First\nname";amount\r\n"Alice\nSmith";100\r\n';
+  assert.equal(detectDelimiter(text), ";");
+  assert.deepEqual(parse(text).rows, [
+    ["First\nname", "amount"],
+    ["Alice\nSmith", "100"],
+  ]);
+});

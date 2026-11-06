@@ -6,7 +6,7 @@ const DELIMITERS = [",", ";", "\t", "|"];
 
 /** Guess the delimiter: the candidate that splits the first few lines most consistently. */
 export function detectDelimiter(text) {
-  const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "").slice(0, 20);
+  const lines = sampleRecords(text);
   let best = ",";
   let bestScore = 0;
   for (const d of DELIMITERS) {
@@ -21,6 +21,32 @@ export function detectDelimiter(text) {
     }
   }
   return best;
+}
+
+// Quoted fields can span physical lines, so sample complete CSV records.
+function sampleRecords(text) {
+  const records = [];
+  let start = 0;
+  let quoted = false;
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i];
+    if (ch === '"') {
+      if (quoted && text[i + 1] === '"') {
+        i += 1; // escaped quote inside a quoted field
+        continue;
+      }
+      quoted = !quoted;
+    } else if (!quoted && (ch === "\r" || ch === "\n")) {
+      const record = text.slice(start, i);
+      if (record.trim() !== "") records.push(record);
+      if (records.length >= 20) return records;
+      if (ch === "\r" && text[i + 1] === "\n") i += 1;
+      start = i + 1;
+    }
+  }
+  const last = text.slice(start);
+  if (last.trim() !== "" && records.length < 20) records.push(last);
+  return records;
 }
 
 function countOutsideQuotes(line, delimiter) {
