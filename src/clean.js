@@ -66,7 +66,7 @@ export function clean(input, options = {}) {
       trailing += 1;
     }
   }
-  const widest = Math.max(header.length, ...rows.map((r) => r.values.length));
+  const widest = rows.reduce((width, row) => Math.max(width, row.values.length), header.length);
   if (widest > header.length) {
     const extra = rows.filter((r) => r.values.length > header.length);
     for (let i = header.length; i < widest; i += 1) header.push(uniqueName(`extra_${i - before.columns + 1}`));
