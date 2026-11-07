@@ -60,7 +60,10 @@ export function parseDateParts(text) {
     return realDate(y, mo, d) ? { kind: "fixed", y, m: mo, d } : null;
   }
   m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
-  if (m) return { kind: "numeric", a: Number(m[1]), b: Number(m[2]), y: Number(m[3]) };
+  if (m) {
+    const [a, b, y] = [Number(m[1]), Number(m[2]), Number(m[3])];
+    return realDate(y, a, b) || realDate(y, b, a) ? { kind: "numeric", a, b, y } : null;
+  }
   // "Jan 5, 2024", "January 5 2024", "5 Jan 2024", "5-Jan-2024"
   m = s.match(/^([A-Za-z]{3,9})\.?[\s-](\d{1,2}),?[\s-](\d{4})$/) ?? null;
   let month;
