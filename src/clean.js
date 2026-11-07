@@ -33,15 +33,21 @@ export function clean(input, options = {}) {
   if (firstRow > 0) step("Blank lines above the header removed", firstRow);
 
   // Header names: trimmed, blanks named, duplicates numbered.
-  const seen = new Map();
+  const seen = new Set();
+  const reserved = new Set(header.map((raw, i) => (raw.trim().replace(/\s+/g, " ") || `column_${i + 1}`).toLowerCase()));
+  const uniqueName = (base) => {
+    let candidate = base;
+    let suffix = 2;
+    while (seen.has(candidate.toLowerCase())) {
+      do candidate = `${base} (${suffix++})`;
+      while (reserved.has(candidate.toLowerCase()));
+    }
+    seen.add(candidate.toLowerCase());
+    return candidate;
+  };
   let renamed = 0;
   header = header.map((raw, i) => {
-    let name = raw.trim().replace(/\s+/g, " ") || `column_${i + 1}`;
-    const key = name.toLowerCase();
-    if (seen.has(key)) {
-      seen.set(key, seen.get(key) + 1);
-      name = `${name} (${seen.get(key)})`;
-    } else seen.set(key, 1);
+    const name = uniqueName(raw.trim().replace(/\s+/g, " ") || `column_${i + 1}`);
     if (name !== raw) renamed += 1;
     return name;
   });
@@ -63,7 +69,7 @@ export function clean(input, options = {}) {
   const widest = Math.max(header.length, ...rows.map((r) => r.values.length));
   if (widest > header.length) {
     const extra = rows.filter((r) => r.values.length > header.length);
-    for (let i = header.length; i < widest; i += 1) header.push(`extra_${i - before.columns + 1}`);
+    for (let i = header.length; i < widest; i += 1) header.push(uniqueName(`extra_${i - before.columns + 1}`));
     for (const row of rows) while (row.values.length < widest) row.values.push("");
     for (const row of extra.slice(0, MAX_EXAMPLES))
       issues.push({ line: row.line, message: `Has more values than there are column names; the extra ones are kept in new "extra" columns.` });
