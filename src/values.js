@@ -33,9 +33,10 @@ export function parseNumber(text) {
   if (percent) s = s.slice(0, -1);
   if (!/^(\d{1,3}(,\d{3})+|\d+)?(\.\d+)?$/.test(s) || s === "" || s === ".") return null;
   let value = Number(s.replace(/,/g, ""));
+  if (!Number.isFinite(value) || (Number.isInteger(value) && !Number.isSafeInteger(value))) return null;
   if (percent) value /= 100;
   if (negative) value = -value;
-  return { value: Number(value.toPrecision(15)), percent, currency, leadingZero: /^0\d/.test(s) };
+  return { value: Number.isInteger(value) ? value : Number(value.toPrecision(15)), percent, currency, leadingZero: /^0\d/.test(s) };
 }
 
 const MONTHS = {
