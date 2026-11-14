@@ -93,7 +93,7 @@ export function parse(text, delimiter = detectDelimiter(text)) {
     } else field += ch;
     i += 1;
   }
-  if (field !== "" || row.length) {
+  if (field !== "" || row.length || (input.length > 0 && !/[\r\n]$/.test(input))) {
     row.push(field);
     rows.push(row);
   }

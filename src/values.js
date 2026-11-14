@@ -33,9 +33,10 @@ export function parseNumber(text) {
   if (percent) s = s.slice(0, -1);
   if (!/^(\d{1,3}(,\d{3})+|\d+)?(\.\d+)?$/.test(s) || s === "" || s === ".") return null;
   let value = Number(s.replace(/,/g, ""));
+  if (!Number.isFinite(value) || (Number.isInteger(value) && !Number.isSafeInteger(value))) return null;
   if (percent) value /= 100;
   if (negative) value = -value;
-  return { value: Number(value.toPrecision(15)), percent, currency, leadingZero: /^0\d/.test(s) };
+  return { value: Number.isInteger(value) ? value : Number(value.toPrecision(15)), percent, currency, leadingZero: /^0\d/.test(s) };
 }
 
 const MONTHS = {
@@ -60,7 +61,10 @@ export function parseDateParts(text) {
     return realDate(y, mo, d) ? { kind: "fixed", y, m: mo, d } : null;
   }
   m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
-  if (m) return { kind: "numeric", a: Number(m[1]), b: Number(m[2]), y: Number(m[3]) };
+  if (m) {
+    const [a, b, y] = [Number(m[1]), Number(m[2]), Number(m[3])];
+    return realDate(y, a, b) || realDate(y, b, a) ? { kind: "numeric", a, b, y } : null;
+  }
   // "Jan 5, 2024", "January 5 2024", "5 Jan 2024", "5-Jan-2024"
   m = s.match(/^([A-Za-z]{3,9})\.?[\s-](\d{1,2}),?[\s-](\d{4})$/) ?? null;
   let month;
